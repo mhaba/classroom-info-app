@@ -1,0 +1,11 @@
+QMainWindow#window {
+
+}
+
+QVBoxLayout#vbox {
+
+}
+
+QLabel#info_text {
+    font-size: 20px;
+}
