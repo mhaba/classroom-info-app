@@ -39,16 +39,17 @@ class Presenter(object):
     # handle dialog signals
     def handle_btn_accept(self):
         dlg_text, dialog = self.dialog.get_text()
+        if self.configuration.make_conf_file():
+            self.configuration.add_section_value('../config/classroom_info.conf', 'classroom_info',
+                                                 'code', dlg_text)
+            dialog.close()
 
-        try:
-            # Create dir only if not exists, otherwise will not throw error and pass
-            makedirs("../config", exist_ok=True)
-            with open('../config/classroom_info.conf', 'w') as config_file:
-                config_file.write('[classroom_info]\n')
-                config_file.write(f'id = {dlg_text}')
-                dialog.close()
-        except Exception as err:
-            print(f'Error at handle_configuration: {err}')
+        #     with open('../config/classroom_info.conf', 'w') as config_file:
+        #         config_file.write('[classroom_info]\n')
+        #         config_file.write(f'code = {dlg_text}')
+        #         dialog.close()
+        # except Exception as err:
+        #     print(f'Error at handle_configuration: {err}')
 
     # handle view signals
     def handle_refresh(self):

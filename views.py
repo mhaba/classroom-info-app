@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal, QRect
-from PyQt5.QtGui import QPixmap, QMovie
+from PyQt5.QtGui import QPixmap, QMovie, QIcon
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QDialog
 
 
@@ -97,10 +97,11 @@ class IdDialog(QDialog):
 
         self.setWindowModality(QtCore.Qt.ApplicationModal)
         self.setEnabled(True)
-        # self.resize(400, 150)
         self.setFixedSize(400, 150)
+        self.setWindowIcon(QIcon("../../schoolroom-info/src/resources/logo_asic.jpg"))
         self.setWindowTitle("No se encontró el código de aula")
         self.setModal(True)
+
         self.buttonBox = QtWidgets.QDialogButtonBox(self)
         self.buttonBox.setGeometry(QtCore.QRect(40, 110, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
