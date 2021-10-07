@@ -5,6 +5,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 
 CONF_PATH = '../config/classroom_info.conf'
 
+
 class AppConfiguration(QObject):
     confError = pyqtSignal()
 
@@ -34,7 +35,6 @@ class AppConfiguration(QObject):
 
         app_conf = RawConfigParser()
         self._load_config(main_app_conf_file, app_conf)
-
         return app_conf
 
     def make_conf_file(self):
@@ -49,7 +49,8 @@ class AppConfiguration(QObject):
 
         if path.exists(CONF_PATH) and path.getsize(CONF_PATH) > 0:
             config = self.check_load_config(CONF_PATH)
-            if '[classroom_info]' in config.sections():
+            # if '[classroom_info] in config.sections():
+            if 'classroom_info' in config.sections():
                 return True
             else:
                 create_conf_file()
@@ -58,22 +59,25 @@ class AppConfiguration(QObject):
 
         return True
 
-    def add_section_value(self, conf_file: str, section: str, option: str, value: str):
-        old_conf = self.check_load_config(conf_file)
+    def add_section_value(self, section: str, option: str, value: str):
+        old_conf = self.check_load_config(CONF_PATH)
         try:
             old_conf.set(section, option, value)
-            with open(conf_file, 'w') as file:
+            with open(CONF_PATH, 'w') as file:
                 old_conf.write(file)
+                print(f'add_section {section} {option} {value}')
 
         except Exception as err:
             with open(conf_file, 'w') as file:
                 file.write(section)
                 file.write(f'{option} = {value}')
+                print('Hola', option, value)
             print(f'[add_section_value] {err}')
 
-    def get_classroom_code(self, conf):
+    def get_classroom_code(self):
         try:
-            return conf.get('classroom_info', 'code')
+            config = self.check_load_config(CONF_PATH)
+            return config.get('classroom_info', 'code')
         except Exception as err:
             print(f'[get_classroom_code] {err}')
             self.confError.emit()

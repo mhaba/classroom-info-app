@@ -1,3 +1,5 @@
+from time import sleep
+
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal, QRect
 from PyQt5.QtGui import QPixmap, QMovie, QIcon
@@ -63,22 +65,49 @@ class Window(QWidget):
 
         self.setLayout(self._vbox)
 
+    # Handle smith status functions
+    def recording(self):
+        print('win recording')
+        self.stop_spinning()
+        self._image = QPixmap("../../schoolroom-info/src/resources/red.png").scaled(250, 250)
+        self._info_label.setText("Recording")
+
+        self._info_circle.setPixmap(self._image)
+
+    def no_recording(self):
+        print('win no recording')
+        self.stop_spinning()
+        self._info_label.setText("No recording")
+        self._image = QPixmap("../../schoolroom-info/src/resources/grey.png").scaled(250, 250)
+
+        self._info_circle.setPixmap(self._image)
+
+    def will_record(self):
+        print('win will record')
+        self.stop_spinning()
+        self._info_label.setText("Will record later")
+        self._image = QPixmap("../../schoolroom-info/src/resources/green.png").scaled(250, 250)
+
+        self._info_circle.setPixmap(self._image)
+
+    # Handle spinning (loading) functions
     def start_spinning(self):
+        print('win start_spinning')
         self._info_label.setText("Refreshing...")
         self._info_circle.setMovie(self._loading_gif)
 
         self._loading_gif.start()
 
     def stop_spinning(self):
-        if True:
-            self._image = QPixmap("../../schoolroom-info/src/resources/red.png").scaled(250, 250)
-            self._info_label.setText("Recording")
-        else:
-            self._info_label.setText("No recording")
-            self._image = QPixmap("../../schoolroom-info/src/resources/grey.png").scaled(250, 250)
+        # if True:
+        #     self._image = QPixmap("../../schoolroom-info/src/resources/red.png").scaled(250, 250)
+        #     self._info_label.setText("Recording")
+        # else:
+        #     self._info_label.setText("No recording")
+        #     self._image = QPixmap("../../schoolroom-info/src/resources/grey.png").scaled(250, 250)
 
         self._loading_gif.stop()
-        self._info_circle.setPixmap(self._image)
+        # self._info_circle.setPixmap(self._image)
         self.refreshStopped.emit()
 
     def refresh(self):
@@ -86,6 +115,9 @@ class Window(QWidget):
 
     def get_button(self):
         return self._refresh_btn
+
+    def set_info_label(self, text):
+        self._info_label.setText(text)
 
 
 class IdDialog(QDialog):
@@ -113,7 +145,7 @@ class IdDialog(QDialog):
         self.lineEdit = QtWidgets.QLineEdit(self)
         self.lineEdit.setGeometry(QtCore.QRect(20, 50, 361, 21))
         self.lineEdit.setObjectName("lineEdit")
-        self.label.setText("Introduzca el código de aula: ")
+        self.label.setText("Introduzca el código de espacio del aula: ")
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
