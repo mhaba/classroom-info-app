@@ -58,24 +58,16 @@ class AppWindow(QMainWindow):
         self._classroom_code = self.configuration.get_classroom_code()
         self._next_recordings = None
 
-        # Thread work
+        # Thread and worker
         self._worker = None
         self._worker_thread = QThread()
-        # self._win_thread = QThread(self.win)
-        # self._win_thread.started.connect(self.presenter.handle_refresh)
         self._timer = QTimer()
+
         # Videoapuntes general parameters (if changed will refresh at application's reload)
         self._parameters = videoapuntes_client.get_parameters()
         self.status_refresh_rate = self._parameters.get('status')
-        # Reload calendar and status info
-        # self._reload_calendar()
-        # self._reload_status()
-        # Create threads
+        # Create thread
         self._create_status_thread()
-
-    def _stop_thread(self):
-        self._timer.stop()
-        self._worker_thread.quit()
 
     def _reload_parameters(self):
         # Reloads videoapuntes given parameters
@@ -83,24 +75,14 @@ class AppWindow(QMainWindow):
         if self.status_refresh_rate != self._parameters.get('status'):
             self.status_refresh_rate = self._parameters.get('status')
 
-            self._stop_thread()
-            self._worker.moveToThread(self._worker_thread)
-            # self._worker_thread.start()
-            self._timer.timeout.connect(self._reload_status)
+            # Stops and restarts timer
             self._timer.start(self.status_refresh_rate)
 
     def _reload_status(self):
-        self._classroom_code = self.configuration.get_classroom_code()
-        recs = videoapuntes_client.get_icalendar(self._classroom_code)
-        print(f'_reload_status (classroom code): {self._classroom_code}')
+        self._worker_thread.exit()
 
         self._reload_parameters()
-
-        self._worker = Worker(recs)
-
-        self._worker_thread.start()
-
-        print(f'_reload_status (recordings): {recs}')
+        self._create_status_thread()
 
     def _create_status_thread(self):
         self._classroom_code = self.configuration.get_classroom_code()
@@ -115,9 +97,7 @@ class AppWindow(QMainWindow):
 
         # Call _spinning functions when worker.refreshing or worker.refreshed are emitted
         self._worker.refreshing.connect(self.presenter.handle_refresh)
-        # self._worker.refreshing.connect(self.win.start_spinning)
         self._worker.refreshed.connect(self.presenter.handle_stop_refresh)
-        # self._worker.refreshed.connect(self.win.stop_spinning)
         # Call when worker.recording, .noRecording, willRec are emitted
         self._worker.recording.connect(self.win.recording)
         self._worker.noRecording.connect(self.win.no_recording)
