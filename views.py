@@ -1,9 +1,7 @@
-from time import sleep
-
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal, QRect
 from PyQt5.QtGui import QPixmap, QMovie, QIcon
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QDialog
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QDialog
 
 
 class Window(QWidget):
@@ -42,23 +40,12 @@ class Window(QWidget):
         self._loading_spinner.resize(50, 50)
         self._loading_gif = QMovie("../../schoolroom-info/src/resources/loading.gif")
 
-        # Refresh button
-        self._refresh_btn = QPushButton("Refresh", self)
-        self._refresh_btn.setObjectName("refresh_btn")
-        self._refresh_btn.setFixedSize(100, 25)
-        # Button box
-        self._btn_hbox = QHBoxLayout()
-        self._btn_hbox.addWidget(self._refresh_btn)
-        # Refreshing functionality
-        self._refresh_btn.clicked.connect(self.refresh)
-
         self._vbox = QVBoxLayout()
         self._vbox.setObjectName("loader_box")
         self._vbox.addWidget(self._info_label)
         self._vbox.addStretch(1)
         self._vbox.addWidget(self._info_circle)
         self._vbox.addStretch(1)
-        self._vbox.addLayout(self._btn_hbox)
 
         self._info_label.setAlignment(Qt.AlignCenter)
         self._vbox.setAlignment(Qt.AlignCenter)
@@ -99,15 +86,7 @@ class Window(QWidget):
         self._loading_gif.start()
 
     def stop_spinning(self):
-        # if True:
-        #     self._image = QPixmap("../../schoolroom-info/src/resources/red.png").scaled(250, 250)
-        #     self._info_label.setText("Recording")
-        # else:
-        #     self._info_label.setText("No recording")
-        #     self._image = QPixmap("../../schoolroom-info/src/resources/grey.png").scaled(250, 250)
-
         self._loading_gif.stop()
-        # self._info_circle.setPixmap(self._image)
         self.refreshStopped.emit()
 
     def refresh(self):

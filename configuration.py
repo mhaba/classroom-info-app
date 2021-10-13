@@ -1,5 +1,5 @@
 from configparser import RawConfigParser, MissingSectionHeaderError
-from os import path, makedirs, remove
+from os import path, makedirs
 
 from PyQt5.QtCore import pyqtSignal, QObject
 
@@ -57,7 +57,6 @@ class AppConfiguration(QObject):
 
     def add_section_value(self, section: str, option: str, value: str):
         try:
-            print(f'OK add_section_value')
             with open(CONF_PATH, 'w') as file:
                 file.write(section)
                 file.write(f'\n{option} = {value}')

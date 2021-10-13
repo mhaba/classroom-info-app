@@ -1,5 +1,4 @@
 from sys import argv
-from datetime import datetime, timedelta
 
 from PyQt5.QtCore import QThread, QTimer
 from PyQt5.QtGui import QIcon

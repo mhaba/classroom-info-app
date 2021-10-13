@@ -3,8 +3,6 @@ from time import sleep
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from UPV import videoapuntes_client
-
 
 RECORDING_STATUS = 'recording'
 WILL_RECORD_STATUS = 'willRecord'
@@ -24,7 +22,7 @@ class Worker(QObject):
         self._recordings = recordings
 
     def work(self):
-        print('Work', self._recordings)
+        print(self._recordings)
         time_tuple = get_time_to_start(self._recordings)
 
         will_rec = time_tuple[0]
@@ -79,7 +77,7 @@ def get_time_to_start(recordings):
             continue
 
     # TODO: Remove, it is an example to test
-    next_recording = datetime.strptime('2021-09-30T17:30:00', '%Y-%m-%dT%H:%M:%S')
+    next_recording = datetime.strptime('2021-10-30T17:30:00', '%Y-%m-%dT%H:%M:%S')
 
     if not next_recording:
         return False, -1
