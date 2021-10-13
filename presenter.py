@@ -44,14 +44,11 @@ class Presenter(object):
 
         self.dialog.acceptDialog.connect(self.handle_btn_accept)
 
-    def hola(self):
-        print('Presenter dice hola')
-
     # handle dialog signals
     def handle_btn_accept(self):
         dlg_text, dialog = self.dialog.get_text()
         if self.configuration.make_conf_file():
-            self.configuration.add_section_value('classroom_info', 'code', dlg_text)
+            self.configuration.add_section_value('[classroom_info]', 'code', dlg_text)
             print(f'Btn accept: {dlg_text}')
             dialog.close()
 

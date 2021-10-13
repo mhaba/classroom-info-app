@@ -3,6 +3,7 @@ from os import path, makedirs, remove
 
 from PyQt5.QtCore import pyqtSignal, QObject
 
+main_config = RawConfigParser()
 CONF_PATH = '../config/classroom_info.conf'
 
 
@@ -20,22 +21,19 @@ class AppConfiguration(QObject):
             with open(conf_file, 'r') as file:
                 config.read_file(file)
         except FileNotFoundError as err:
-            print(err)
+            print('load_config1 ', err)
             self.confError.emit()
         except MissingSectionHeaderError as err:
-            print(err)
-            remove(conf_file)
-            self.make_conf_file(config)
-            self._load_config(conf_file, config)
+            print('load_config2 ', err)
+            self.confError.emit()
 
     def check_load_config(self, conf_file):
         # Check and load the config files
         # Load the main app config file
         main_app_conf_file = path.abspath(conf_file)
 
-        app_conf = RawConfigParser()
-        self._load_config(main_app_conf_file, app_conf)
-        return app_conf
+        self._load_config(main_app_conf_file, main_config)
+        return main_config
 
     def make_conf_file(self):
         def create_conf_file():
@@ -48,9 +46,7 @@ class AppConfiguration(QObject):
                 print(f'[conf_file_exists] {err}')
 
         if path.exists(CONF_PATH) and path.getsize(CONF_PATH) > 0:
-            config = self.check_load_config(CONF_PATH)
-            # if '[classroom_info] in config.sections():
-            if 'classroom_info' in config.sections():
+            if 'classroom_info' in main_config.sections():
                 return True
             else:
                 create_conf_file()
@@ -60,24 +56,19 @@ class AppConfiguration(QObject):
         return True
 
     def add_section_value(self, section: str, option: str, value: str):
-        old_conf = self.check_load_config(CONF_PATH)
         try:
-            old_conf.set(section, option, value)
+            print(f'OK add_section_value')
             with open(CONF_PATH, 'w') as file:
-                old_conf.write(file)
-                print(f'add_section {section} {option} {value}')
+                file.write(section)
+                file.write(f'\n{option} = {value}')
 
         except Exception as err:
-            with open(conf_file, 'w') as file:
-                file.write(section)
-                file.write(f'{option} = {value}')
-                print('Hola', option, value)
-            print(f'[add_section_value] {err}')
+            print(f'add_section_value {err}')
+            exit(1)
 
     def get_classroom_code(self):
         try:
-            config = self.check_load_config(CONF_PATH)
-            return config.get('classroom_info', 'code')
+            return main_config.get('classroom_info', 'code')
         except Exception as err:
             print(f'[get_classroom_code] {err}')
             self.confError.emit()
